@@ -6,7 +6,9 @@ import shutil
 from tqdm import tqdm
 
 def calculate_iou_max(yolo_boxes, box):
+    """Calculate the maximum IoU between a box and a list of boxes."""
     def compute_iou(box1, box2):
+        """Compute the intersection over union of two set of boxes, each box is [x1, y1, x2, y2]."""
         x1_1, y1_1, x2_1, y2_1 = box1
         x1_2, y1_2, x2_2, y2_2 = box2
 
@@ -30,6 +32,7 @@ def calculate_iou_max(yolo_boxes, box):
     return max_iou, best_box,best_idx
 
 def filter_boxes(occurences,boxes,scores,labels):
+    """Filter boxes to keep only the ones with the highest scores for each class"""
     while len(occurences) < len(boxes):
         min_score = min(scores)
         idx =scores.index(min_score)
@@ -39,9 +42,8 @@ def filter_boxes(occurences,boxes,scores,labels):
     return boxes,scores,labels
 
 
-# New image curation with suppression of boxes with low iou ? 
 def get_best_yolo_box(gt_box,yolo_boxes,yolo_labels,yolo_scores,mode="msk_iou"):
-
+    """Get the best yolo box for a given ground truth box"""
     iou,yolo_box,idx=calculate_iou_max(yolo_boxes,gt_box)
     if mode=="msk_iou":
         if iou<0.3:
@@ -52,9 +54,9 @@ def get_best_yolo_box(gt_box,yolo_boxes,yolo_labels,yolo_scores,mode="msk_iou"):
 
     return yolo_box,yolo_boxes,yolo_labels,yolo_scores
 
-# msk_iou : keep only the gt boxes with high iou (>0.3) and add the others as msk
 
 def curate_image(boxes,yolo_output,img_path,classes,df,new_data,mode="msk_iou"):
+    """Curate an image by matching ground truth boxes with yolo boxes"""
     name=img_path.split("/")[-1]
     yolo_boxes,yolo_scores,yolo_labels=yolo_output
 
@@ -96,28 +98,6 @@ def curate_image(boxes,yolo_output,img_path,classes,df,new_data,mode="msk_iou"):
             'class': cls,
             })
     
-
-def add_soft_label(yolo_output,img_path,itos,new_data,threshold=0.5):
-    name=img_path.split("/")[-1]
-    yolo_boxes,yolo_scores,yolo_labels=yolo_output
-
-    for box,label,score in zip(yolo_boxes,yolo_labels,yolo_scores):
-        box=[int(x) for x in box]
-        if score<threshold:
-            cls="msk"
-        else:
-            cls=itos[label]
-        
-        new_data.append({
-                'NAME': name,
-                'x1': box[0],
-                'y1': box[1],
-                'x2': box[2],
-                'y2': box[3],
-                'class': cls
-                })
-
-# Different types of masks : black, mean, interpolated, cutpaste
 def add_msk(img_path, image_annotations):
     """Add black masks on an image at the bounding boxes coordinates with class 'msk', masking only non-overlapping parts"""
     img = Image.open(img_path)
@@ -168,7 +148,7 @@ def split_box(box, overlap):
 
 
 def get_overlap(box1, box2):
-        """Retourne la zone de chevauchement entre deux rectangles."""
+        """Get the overlapping part of two boxes."""
         x1_1, y1_1, x2_1, y2_1 = box1
         x1_2, y1_2, x2_2, y2_2 = box2
         
@@ -184,7 +164,7 @@ def get_overlap(box1, box2):
 
 
 def split_dataset_from_csv(new_data_path,data_path, csv_file):
-    # Charger les annotations depuis le CSV
+    """Split the dataset into images and labels folders and create YOLO annotations from a CSV file."""
     annotations_df = pd.read_csv(csv_file)
     all_images = annotations_df['NAME'].unique()
 
@@ -215,14 +195,12 @@ def split_dataset_from_csv(new_data_path,data_path, csv_file):
 
 
 def create_yolo_annotations(image_annotations, target_dir, image_name, label_path):
+    """Create YOLO annotations from a DataFrame of annotations."""
     stoi={'B':0, 'BA':1, 'EO':2, 'Er':3, 'LAM3':4, 'LF':5, 'LGL':6, 'LH_lyAct':7, 'LLC':8, 'LM':9, 'LY':10, 'LZMG':11, 'LyB':12, 'Lysee':13, 'M':14, 'MBL':15, 'MM':16, 'MO':17, 'MoB':18, 'PM':19, 'PNN':20, 'SS':21, 'Thromb':22}
-    """Crée les annotations au format YOLO pour une image donnée."""
     img_path = os.path.join(target_dir, image_name)
     with Image.open(img_path) as img:
         img_width, img_height = img.size
-    
-    #yolo_annotation_file = os.path.join(target_dir, image_name.replace('.jpg', '.txt').replace('.png', '.txt'))
-    
+        
     with open(label_path, 'w') as f:
         for _, row in image_annotations.iterrows():
             if row['class']=="msk":

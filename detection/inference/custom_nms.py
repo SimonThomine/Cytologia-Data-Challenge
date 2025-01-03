@@ -1,11 +1,10 @@
-
 import time
 import torch
 from ultralytics.utils import LOGGER
 from ultralytics.utils.ops import xywh2xyxy
 import torchvision 
 
-# A modification of the non_max_suppression function from ultralytics.utils.ops to return probs of detected instead of a single score
+# A modification of the non_max_suppression (https://github.com/ultralytics/ultralytics/blob/main/ultralytics/utils/ops.py) function from ultralytics.utils.ops to return probs of detected instead of a single score
 def non_max_suppression_modified(
     prediction,
     conf_thres=0.25,
@@ -22,7 +21,7 @@ def non_max_suppression_modified(
     in_place=True,
     rotated=False,
 ):
-    # Checks
+    """Performs Non-Maximum Suppression (NMS) on inference results, modified to return probs of detected instead of a single score"""
     assert 0 <= conf_thres <= 1, f"Invalid Confidence threshold {conf_thres}, valid values are between 0.0 and 1.0"
     assert 0 <= iou_thres <= 1, f"Invalid IoU {iou_thres}, valid values are between 0.0 and 1.0"
     if isinstance(prediction, (list, tuple)):  # YOLOv8 model in validation model, output = (inference_out, loss_out)

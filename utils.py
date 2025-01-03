@@ -14,6 +14,7 @@ def set_seed(seed):
 
 
 def get_device():
+    """Function to get the device (cuda, mps or cpu)"""
     if torch.cuda.is_available():  # Nvidia GPU
         device = "cuda"
     elif torch.backends.mps.is_available():  # Apple silicon

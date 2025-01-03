@@ -6,12 +6,13 @@ from detection.inference.inference_det import YoloInference
 from detection.inference.wbf import wbf
  
 class EnsembleYolo:
+    """Class to perform inference on an ensemble of Yolo models"""
     def __init__(self, models:list[YoloInference],use_probs=False):
         self.models = models
         self.use_probs=use_probs
 
     def predict(self,img,conf=0.00001,verbose=False): 
-        """Ensemble inference to get prediction as an integer (batch)"""
+        """Ensemble inference to get prediction as a list of boxes, scores and labels"""
         all_boxes=[]
         all_soh=[]
 
@@ -41,18 +42,17 @@ class EnsembleYolo:
         return wbf(list_all_boxes,list_all_soh)
 
        
-# We may want to handle more augmentations in the future
 class TtaYolo:
+    """Class to perform inference on a single Yolo model with test time augmentation"""
     def __init__(self, model:YoloInference, augmentations=["hflip","vflip"]): 
         self.model = model
         self.augmentations = augmentations
 
     def predict(self,img,conf=0.00001,verbose=False):
-        """Ensemble inference to get prediction as an integer (batch)"""
+        """Ensemble inference to get prediction as a list of boxes, scores and labels"""
         all_boxes=[]
         all_soh=[]
 
-        # The image opening here is not optimal since it requires a path as input (or a PIL image)
         if isinstance(img,str):
             img=Image.open(img)
         elif not isinstance(img,Image):
@@ -95,10 +95,7 @@ class TtaYolo:
 
         all_soh.append(sohs)
 
-
         list_all_boxes = [box for boxes in all_boxes for box in boxes]
         list_all_soh = [soh for sohs in all_soh for soh in sohs]
 
-        boxes,scores,preds=wbf(list_all_boxes,list_all_soh)
-
-        return boxes,scores,preds
+        return wbf(list_all_boxes,list_all_soh)

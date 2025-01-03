@@ -38,16 +38,17 @@ class YoloInference():
            self.conf_mat=np.load(conf_path)
     
     def predict(self,img,verbose=False,conf=0.05,mc_nms=True,return_probs=False):
+        """Inference on image to get a list of boxes, scores and labels"""
         if self.model_type=="yolov10" or not return_probs:
             return self.predict_base(img,verbose=verbose,conf=conf,mc_nms=mc_nms)
         elif self.model_type=="yolo11" or self.model_type=="yolov8": 
-            return self.predict_yolo11_probs(img,verbose=verbose,conf=conf,mc_nms=mc_nms)
+            return self.predict_probs(img,verbose=verbose,conf=conf,mc_nms=mc_nms)
         else:
             print("Model type not recognized")
             return None
 
-    def predict_yolo11_probs(self,img,verbose=False,conf=0.05,mc_nms=True):
-        # img is a PIL or a path
+    def predict_probs(self,img,verbose=False,conf=0.05,mc_nms=True):
+        """Inference to get probs of detected classes as a supplementary output, this is used for ensembling"""
         if not self.load_model:
             print("LOADING MODEL")
             self.yolo=YOLO(self.weights,verbose=verbose).to(self.device)
@@ -98,6 +99,7 @@ class YoloInference():
     
 
     def predict_base(self,img,verbose=False,conf=0.05,mc_nms=True):
+        """Classic inference to get boxes, scores and labels"""
         if not self.load_model:
             print("LOADING MODEL")
             self.yolo=YOLO(self.weights,verbose=verbose).to(self.device)

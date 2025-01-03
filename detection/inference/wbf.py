@@ -1,8 +1,9 @@
-# Implementation of weighted boxes fusion (WBF) algorithm
+# Implementation of [weighted boxes fusion (WBF) algorithm](https://arxiv.org/abs/1910.13302)
 import numpy as np
 from collections import defaultdict
 
 def compute_iou(box1, box2):
+        """Compute the intersection over union of two set of boxes, each box is [x1, y1, x2, y2]."""
         x1_1, y1_1, x2_1, y2_1 = box1
         x1_2, y1_2, x2_2, y2_2 = box2
 
@@ -21,6 +22,7 @@ def compute_iou(box1, box2):
         return inter_area / union_area if union_area > 0 else 0
 
 def fuse_box(cluster):
+    """Fuse boxes in a cluster"""
     boxes, sohs= cluster["boxes"], cluster["soh"]
 
     label_score_sum = defaultdict(float) 
@@ -43,6 +45,7 @@ def fuse_box(cluster):
     return {"box": [round(x1_mean), round(y1_mean), round(x2_mean), round(y2_mean)], "soh": soh_mean}
     
 def wbf(boxes,sohs):
+    """Weighted boxes fusion, boxes is a list of boxes, sohs is a list of vectors of scores of each box"""
     # Sort given boxes by their scores
     max_scores = np.max(sohs,axis=1)
     sorted_indices = np.argsort(max_scores)[::-1]

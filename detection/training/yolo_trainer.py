@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from sklearn.model_selection import KFold
 
 class YoloTrainer():
-    """ Trainer for yolo"""
+    """ Trainer class for yolo"""
     def __init__(self, conf): 
         
         self.conf=conf
@@ -40,7 +40,6 @@ class YoloTrainer():
         else:
             self.data_yaml=self.create_data_yaml_with_cv() # multiple files (one per fold)
         
-    
 
     def create_data_yaml(self):
         """Create the yaml conf file for the Yolo model"""
@@ -83,14 +82,12 @@ class YoloTrainer():
         
     def create_data_yaml_with_cv(self, identifier=""):
         """Create multiple yaml conf files for cross-validation"""
-        data_yaml_paths = []  # Pour stocker les chemins des fichiers YAML
+        data_yaml_paths = []  
         images = os.listdir(self.conf.dataset + "/images")
         images = [self.conf.dataset + "/images/" + image for image in images if image.endswith(".jpg")]
 
-        # Shuffle les données avant de les utiliser
         np.random.shuffle(images)
         
-        # Instanciation de KFold
         kf = KFold(n_splits=self.conf.folds, shuffle=True, random_state=self.conf.seed)
         
         for fold_idx, (train_idx, val_idx) in enumerate(kf.split(images)):
@@ -189,10 +186,12 @@ class YoloTrainer():
                 
                 
     def test(self):
+        """Test the model"""
         self.load_weights()
         self.model.predict(source=f"{self.conf.dataset}/val", save=True,iou=0.5)
 
     def val(self):
+        """Validate the model"""
         self.load_weights()
         self.model.val(source=f"{self.conf.dataset}/val")
 

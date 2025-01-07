@@ -2,9 +2,13 @@
 
 Project used for training and inference for the Cytologia Data Challenge 
 
+The [`inference.ipynb`](inference.ipynb) file resumates our thought process for both inference and training, including details on hyperparameters, augmentations, and other relevant information. While the information in the [`inference.ipynb`](inference.ipynb) file is redundant with this `Readme.md`, it serves as a standalone resource for explaining the method and predicting results.
+
+You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
+
 ## Getting Started
 
-You will need [Python 3.11](https://www.python.org/downloads) and the packages specified in _requirements.txt_.
+You will need [Python 3.11](https://www.python.org/downloads) and the packages specified in `requirements.txt`.
 
 Install packages with:
 
@@ -165,10 +169,18 @@ To correctly create a prediction to submit in the Cytologia Data Challence, we h
 
 We opted for the latest YOLO model from Ultralytics: [YOLO11](https://docs.ultralytics.com/models/yolo11/)  alongside its predecessor [YOLOv10](https://docs.ultralytics.com/models/yolov10/) if you use ensembling. This decision was driven by the models' fast inference capabilities, which meet the challenge's requirement for efficient image processing. By leveraging different models, we aim to take advantage of ensembling diverse architectures to improve overall performance.
 
-We specifically chose relatively small versions of YOLO11 and YOLOv10 to maintain a balance between inference speed and accuracy: YOLO11n (size 384), YOLO11m (size 384), and YOLOv10n (size 384).
+We specifically chose relatively small versions of YOLO11 and YOLOv10 to strike a balance between inference speed and accuracy: YOLO11n (size 384), YOLO11m (size 384), and YOLOv10n (size 384). The only exception is YOLOv11x, which is a larger model compared to the others. However, being a YOLO model, its inference speed still remains relatively fast.
 
 All models were fine-tuned using an automated dataset curation process. Details of this process are provided in the training section of the notebook, where we outline our strategy for optimizing YOLO models to achieve the best possible performance.
 
+We used the following models for our best solution :
+
+
+**Models trained with iou curation**: The models `yolo11m384_iou.pt`,`yolo11x384_iou.pt`,`yolov10s384_iou.pt` and `yolov10m384_iou.pt` were trained on a dataset where ground truth boxes with a low IoU to the predicted ones were masked.    
+**Models trained with simple curation**: The models `yolo11m384_blk.pt` and `yolov10n384_blk.pt` were trained on a dataset where ground truth boxes were kept, even if they had a low IoU with the predicted ones.   
+**Model not curated**: The `yolo11n384_nc.pt` model was trained on the raw data from the CSV, with only minor corrections made for bounding boxes that were out of the image.
+
+You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
 
 ### Non-Maximum-Suppression 
 

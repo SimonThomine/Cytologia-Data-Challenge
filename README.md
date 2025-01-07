@@ -216,3 +216,11 @@ In the test.csv, we know the exact number of detections required for each image.
 ### Full pipeline
 
 The [`predictions_yolo_ensemble.ipynb`](notebooks/predictions_yolo_ensemble.ipynb) and [`predictions_yolo.ipynb`](notebooks/predictions_yolo.ipynb) are responsible for this processing. Functions in [`utils_notebook.py`](notebooks/utils_notebook.py), [`custom_nms.py`](detection/inference/custom_nms.py), [`ensemble_det.py`](detection/inference/ensemble_det.py), [`inference_det.py`](detection/inference/inference_det.py) and [`wbf.py`](detection/inference/wbf.py) are also used for the prediction process.
+
+
+
+## License and Dependencies
+This project is licensed under the MIT License.
+
+This project uses the following open-source libraries and models:
+- [Ultralytics YOLO](https://github.com/ultralytics/ultralytics), licensed under AGPLv3.

@@ -2,7 +2,8 @@
 
 Project used for training and inference for the Cytologia Data Challenge 
 
-The [`inference.ipynb`](inference.ipynb) file resumates our thought process for both inference and training, including details on hyperparameters, augmentations, and other relevant information. While the information in the [`inference.ipynb`](inference.ipynb) file is redundant with this `Readme.md`, it serves as a standalone resource for explaining the method and predicting results.
+The [`inference.ipynb`](inference.ipynb) file resumates our thought process for both inference and training, including details on hyperparameters, augmentations, and other relevant information. While the information in the [`inference.ipynb`](inference.ipynb) file is redundant with this `Readme.md`, it serves as a standalone resource for explaining the method and predicting results.   
+To simply **run the inference to generate the submission results**, please refer to this [`inference.ipynb`](inference.ipynb) file and download the pretrained weights.
 
 You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
 
@@ -97,7 +98,7 @@ trainer=YoloTrainer(conf)
 trainer.train()
 ```
 
-### Training hyperparameters, augmentations etc ...
+### Training Hyperparameters, Augmentations etc ...
 
 To train the model effectively, we tested different settings for the training process. This section will outline our assumptions and the tests we conducted to validate them. Finally, we will describe the final training setup that we used.
 
@@ -117,7 +118,7 @@ To train the model effectively, we tested different settings for the training pr
 
 **Hyperparameters and training** : We trained all our models for 250 epochs with a batch size of 64 (or 32 for larger models, such as YOLOv11l). We reduced the image size from 640 to 384 and used a validation split of 5% of the data to maximize the amount of data available for training.
 
-## Dataset creation and curation
+## Dataset Creation and Curation
 
 In order to create the yolo dataset in the correct format, we had to do some formatting to convert the train.csv file to an acceptable yolo format.   
 We have also implemented a dataset curation based on a yolo trained on the "not curated" data in order to clean the unprecise bounding box, mask the unatated wbc and mask the wrongly annotated wbc. 
@@ -157,15 +158,13 @@ However, both methods led to a decrease in performance. Some cell types were fre
 
 The curation and creation script is in the file [`csv_dst_yolo.ipynb`](notebooks/csv_dst_yolo.ipynb) along with functions in [`utils_notebook.py`](notebooks/utils_notebook.py).
 
-## Uncorruption of data
+## Uncorruption of Data
 
 When training on the train images, we encountered an error `Corrupt JPEG data: 27 extraneous bytes before marker 0xdb`. To correct this, we simply reprocessed and saved the images after loading. Details are explained in [`uncorrupt.ipynb`](notebooks/uncorrupt.ipynb).
 
-## Filling the test.csv file 
+## Models and Inference
 
-To correctly create a prediction to submit in the Cytologia Data Challence, we had to fill the test.csv with our detections and labels.
-
-### Yolo Model
+### Yolo Models
 
 We opted for the latest YOLO model from Ultralytics: [YOLO11](https://docs.ultralytics.com/models/yolo11/)  alongside its predecessor [YOLOv10](https://docs.ultralytics.com/models/yolov10/) if you use ensembling. This decision was driven by the models' fast inference capabilities, which meet the challenge's requirement for efficient image processing. By leveraging different models, we aim to take advantage of ensembling diverse architectures to improve overall performance.
 
@@ -182,7 +181,7 @@ We used the following models for our best solution :
 
 You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
 
-### Inference time 
+### Inference Time 
 Since inference time is a critical factor for the doctors organizing this challenge, we have included this section to showcase the fast inference capabilities of our model across different scenarios and GPUs.
 
 **RTX 4060 (laptop)**:  
@@ -198,6 +197,11 @@ Since inference time is a critical factor for the doctors organizing this challe
 
 
 Even with the ensemble method, inference time remains exceptionally low. Additionally, the performance gap between the ensemble and a single model is minimal, making a single model a viable option. By opting for a single model, you can achieve a speedup of 7–10x with only a slight trade-off in performance.
+
+
+## Inference Details
+
+To correctly create a prediction to submit in the Cytologia Data Challence, we had to fill the test.csv with our detections and labels.
 
 ### Non-Maximum-Suppression 
 
@@ -215,7 +219,7 @@ Additionally, we handled the image preprocessing ourselves.
 Since YOLOv10 is end-to-end, we did not use the class probabilities when ensembling with YOLOv10 models.
 
 
-### Detection models ensembling
+### Detection Models Ensembling
 
 To enhance the performance of our method, we decided to apply model ensembling to combine the predictions of multiple models. While ensembling is commonly used in classification tasks and is relatively straightforward, there is limited literature on its application in object detection.
 
@@ -225,12 +229,12 @@ Inspired by the paper [Weighted boxes fusion: Ensembling boxes from different ob
 
 Illustration of the weighted box fusion algorithm
 
-### Filtering of boxes
+### Filtering of Boxes
 
 In the test.csv, we know the exact number of detections required for each image. Our strategy was to set a very low threshold for the YOLO model to ensure that we predict more boxes than the actual number of boxes in the image. We then retained only the boxes with the highest scores (function `filter_boxes` in [`utils_notebook.py`](notebooks/utils_notebook.py)).
 
 
-### Full pipeline
+### Full Pipeline
 
 The [`predictions_yolo_ensemble.ipynb`](notebooks/predictions_yolo_ensemble.ipynb) and [`predictions_yolo.ipynb`](notebooks/predictions_yolo.ipynb) are responsible for this processing. Functions in [`utils_notebook.py`](notebooks/utils_notebook.py), [`custom_nms.py`](detection/inference/custom_nms.py), [`ensemble_det.py`](detection/inference/ensemble_det.py), [`inference_det.py`](detection/inference/inference_det.py) and [`wbf.py`](detection/inference/wbf.py) are also used for the prediction process.
 

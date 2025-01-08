@@ -187,8 +187,7 @@ Since inference time is a critical factor for the doctors organizing this challe
 **RTX 4060 (laptop)**:  
 - **Best Ensemble** (7 YOLO models): **70ms** → **0.9385** on the public leaderboard
 - **Single YOLOm Model** (`yolo11m384_iou.pt`): **10ms** → **0.9330** on the public leaderboard
-- **Single YOLOs Model** (`yolov10n384_blk.pt`): **7ms** → **0.9320** on the public leaderboard
-
+- **Single YOLOs Model** (`yolov10n384_blk.pt`): **7ms** and **30ms** on CPU → **0.9320** on the public leaderboard
 
 **RTX 4080**:  
 - **Best Ensemble** (7 YOLO models): **40ms** → **0.9385** on the public leaderboard

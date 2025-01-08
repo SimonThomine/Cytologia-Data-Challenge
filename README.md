@@ -182,6 +182,23 @@ We used the following models for our best solution :
 
 You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
 
+### Inference time 
+Since inference time is a critical factor for the doctors organizing this challenge, we have included this section to showcase the fast inference capabilities of our model across different scenarios and GPUs.
+
+**RTX 4060 (laptop)**:  
+- **Best Ensemble** (7 YOLO models): **70ms** → **0.9385** on the public leaderboard
+- **Single YOLOm Model** (`yolo11m384_iou.pt`): **10ms** → **0.9330** on the public leaderboard
+- **Single YOLOs Model** (`yolov10n384_blk.pt`): **7ms** → **0.9320** on the public leaderboard
+
+
+**RTX 4080**:  
+- **Best Ensemble** (7 YOLO models): **40ms** → **0.9385** on the public leaderboard
+- **Single YOLOm Model** (`yolo11m384_iou.pt`): **5ms** → **0.9330** on the public leaderboard
+- **Single YOLOs Model** (`yolov10n384_blk.pt`): **4ms** → **0.9320** on the public leaderboard
+
+
+Even with the ensemble method, inference time remains exceptionally low. Additionally, the performance gap between the ensemble and a single model is minimal, making a single model a viable option. By opting for a single model, you can achieve a speedup of 7–10x with only a slight trade-off in performance.
+
 ### Non-Maximum-Suppression 
 
 The YOLO model from Ultralytics includes its own Non-Maximum Suppression (NMS) algorithm, designed to eliminate overlapping bounding boxes of the same class. We have chosen a relatively low NMS threshold of 0.4, as cells of the same or different classes should not overlap (at least, they do not in the training data).

@@ -143,7 +143,7 @@ After training, we cleaned the dataset as follows:
 
 - We matched the ground truth boxes provided in the train.csv with the YOLO predictions, retaining the YOLO bounding boxes (which were empirically more accurate than the manual annotations) while preserving the ground truth class.
 - For YOLO detections with a sufficient score that did not match any ground truth boxes, we masked the corresponding part of the image with a black mask to ensure no unannotated cells remained in the training dataset (whether they were WBCs at the border or unannotated WBCs) (see left figure).
-- For ground truth boxes with no matching YOLO boxes (IoU < 0.4), we removed these bounding boxes from the dataset, assuming they were incorrect annotations (see right figure).
+-For ground truth boxes with no matching YOLO boxes (IoU < 0.4), we also masked these bounding boxes, assuming they could be incorrect annotations (see right figure).
 
 The figure below illustrates the cleaning procedure we described.
 

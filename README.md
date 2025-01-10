@@ -7,6 +7,9 @@ To simply **run the inference to generate the submission results**, please refer
 
 You can download the best pretrained weights with this link : [Google Drive](https://drive.google.com/drive/folders/1gDwqRtLoKqwLIaGFd2SwPffzibOtIEmx?usp=sharing)
 
+The [`training.ipynb`](training.ipynb) notebook reproduces the complete training pipeline we used to achieve third place on the private leaderboard. You can use this file to reproduce the model binaries. However, for a deeper understanding of the methodology and to adapt it to your specific needs, we recommend referring to this `README`.
+
+
 ## Getting Started
 
 You will need [Python 3.11](https://www.python.org/downloads) and the packages specified in `requirements.txt`.
@@ -14,7 +17,7 @@ You will need [Python 3.11](https://www.python.org/downloads) and the packages s
 Install packages with:
 
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Inference
@@ -143,7 +146,7 @@ After training, we cleaned the dataset as follows:
 
 - We matched the ground truth boxes provided in the train.csv with the YOLO predictions, retaining the YOLO bounding boxes (which were empirically more accurate than the manual annotations) while preserving the ground truth class.
 - For YOLO detections with a sufficient score that did not match any ground truth boxes, we masked the corresponding part of the image with a black mask to ensure no unannotated cells remained in the training dataset (whether they were WBCs at the border or unannotated WBCs) (see left figure).
--For ground truth boxes with no matching YOLO boxes (IoU < 0.4), we also masked these bounding boxes, assuming they could be incorrect annotations (see right figure).
+- For ground truth boxes with no matching YOLO boxes (IoU < 0.4), we also masked these bounding boxes, assuming they could be incorrect annotations (see right figure).
 
 The figure below illustrates the cleaning procedure we described.
 

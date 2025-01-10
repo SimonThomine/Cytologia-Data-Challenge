@@ -24,4 +24,3 @@ conf=YoloConfig(
 )
 trainer=YoloTrainer(conf)
 trainer.train()
-

@@ -63,7 +63,7 @@ In order to configure the training of the yolo model, you can tweak some trainin
 - **epochs** `(int)` : Number of epochs to train the model.
 - **batch_size** `(int)` : Batch size for training.
 - **workers** `(int)` : Number of workers to use for the dataloader.
-- **img_size** `(tuple)` : Image size to use for the model, specified as a tuple (e.g., `(224, 224)`).
+- **img_size** `(int)` : Image size to use for the model, specified as a tuple (e.g., `384`).
 - **nc** `(int)` : Number of classes (23 for Cytologia)
 - **classes** `(list[str])` : List of classes (names corresponding to the class index)
 - **identifier** `(str)` : Identifier for the model (for easy versioning)
